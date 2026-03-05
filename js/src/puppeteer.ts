@@ -5,7 +5,7 @@
 
 import type { Browser } from "puppeteer-core";
 import type { LaunchOptions } from "./types.js";
-import { getDefaultStealthArgs } from "./config.js";
+import { buildArgs } from "./args.js";
 import { ensureBinary } from "./download.js";
 import { parseProxyUrl } from "./proxy.js";
 
@@ -99,19 +99,3 @@ async function maybeResolveGeoip(
   };
 }
 
-function buildArgs(options: LaunchOptions): string[] {
-  const args: string[] = [];
-  if (options.stealthArgs !== false) {
-    args.push(...getDefaultStealthArgs());
-  }
-  if (options.args) {
-    args.push(...options.args);
-  }
-  if (options.timezone) {
-    args.push(`--fingerprint-timezone=${options.timezone}`);
-  }
-  if (options.locale) {
-    args.push(`--lang=${options.locale}`);
-  }
-  return args;
-}

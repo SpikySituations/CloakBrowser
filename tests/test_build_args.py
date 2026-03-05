@@ -92,3 +92,75 @@ def test_migrate_both_none():
         result = _migrate_timezone_id(None, kwargs)
     assert result is None
     assert len(w) == 0
+
+
+# --- Deduplication tests ---
+
+
+def test_user_fingerprint_overrides_default():
+    """User --fingerprint should override the random default seed."""
+    args = _build_args(stealth_args=True, extra_args=["--fingerprint=99887"])
+    fingerprint_args = [a for a in args if a.startswith("--fingerprint=")]
+    assert len(fingerprint_args) == 1
+    assert fingerprint_args[0] == "--fingerprint=99887"
+
+
+def test_user_platform_overrides_default():
+    """User --fingerprint-platform should override the default."""
+    args = _build_args(stealth_args=True, extra_args=["--fingerprint-platform=linux"])
+    platform_args = [a for a in args if a.startswith("--fingerprint-platform=")]
+    assert len(platform_args) == 1
+    assert platform_args[0] == "--fingerprint-platform=linux"
+
+
+def test_timezone_param_overrides_user_arg():
+    """Dedicated timezone param should override user arg."""
+    args = _build_args(
+        stealth_args=True,
+        extra_args=["--fingerprint-timezone=Europe/London"],
+        timezone="America/New_York",
+    )
+    tz_args = [a for a in args if a.startswith("--fingerprint-timezone=")]
+    assert len(tz_args) == 1
+    assert tz_args[0] == "--fingerprint-timezone=America/New_York"
+
+
+def test_locale_param_overrides_user_arg():
+    """Dedicated locale param should override user --lang arg."""
+    args = _build_args(
+        stealth_args=True,
+        extra_args=["--lang=de-DE"],
+        locale="en-US",
+    )
+    lang_args = [a for a in args if a.startswith("--lang=")]
+    assert len(lang_args) == 1
+    assert lang_args[0] == "--lang=en-US"
+
+
+def test_no_duplicate_flags():
+    """No flag key should appear more than once in the output."""
+    args = _build_args(
+        stealth_args=True,
+        extra_args=["--fingerprint=99887", "--fingerprint-timezone=UTC", "--lang=fr-FR"],
+        timezone="Europe/Berlin",
+        locale="de-DE",
+    )
+    keys = [a.split("=", 1)[0] for a in args]
+    assert len(keys) == len(set(keys)), f"Duplicate keys found: {keys}"
+
+
+def test_non_value_flags_preserved():
+    """Flags without = should be preserved without dedup issues."""
+    args = _build_args(stealth_args=True, extra_args=["--disable-gpu", "--no-zygote"])
+    assert "--disable-gpu" in args
+    assert "--no-zygote" in args
+    assert "--no-sandbox" in args
+
+
+def test_override_logs_debug(caplog):
+    """Should log debug message when an override happens."""
+    import logging
+
+    with caplog.at_level(logging.DEBUG, logger="cloakbrowser"):
+        _build_args(stealth_args=True, extra_args=["--fingerprint=99887"])
+    assert any("--fingerprint=" in r.message and "99887" in r.message for r in caplog.records)

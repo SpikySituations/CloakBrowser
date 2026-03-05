@@ -549,18 +549,39 @@ def _build_args(
     timezone: str | None = None,
     locale: str | None = None,
 ) -> list[str]:
-    """Combine stealth args with user-provided args and locale flags."""
-    result = []
+    """Combine stealth args with user-provided args and locale flags.
+
+    Deduplicates by flag key (everything before '=').
+    Priority: stealth defaults < user args < dedicated params (timezone/locale).
+    """
+    seen: dict[str, str] = {}
+
     if stealth_args:
-        result.extend(get_default_stealth_args())
+        for arg in get_default_stealth_args():
+            seen[arg.split("=", 1)[0]] = arg
+
     if extra_args:
-        result.extend(extra_args)
+        for arg in extra_args:
+            key = arg.split("=", 1)[0]
+            if key in seen:
+                logger.debug("Arg override: %s -> %s", seen[key], arg)
+            seen[key] = arg
+
     # Timezone/locale flags are independent of stealth_args — always inject when set
     if timezone:
-        result.append(f"--fingerprint-timezone={timezone}")
+        key = "--fingerprint-timezone"
+        flag = f"{key}={timezone}"
+        if key in seen:
+            logger.debug("Arg override: %s -> %s", seen[key], flag)
+        seen[key] = flag
     if locale:
-        result.append(f"--lang={locale}")
-    return result
+        key = "--lang"
+        flag = f"{key}={locale}"
+        if key in seen:
+            logger.debug("Arg override: %s -> %s", seen[key], flag)
+        seen[key] = flag
+
+    return list(seen.values())
 
 
 def _parse_proxy_url(proxy: str) -> dict[str, Any]:

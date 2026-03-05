@@ -123,6 +123,59 @@ describe("buildArgs timezone/locale", () => {
   });
 });
 
+describe("buildArgs deduplication", () => {
+  it("user --fingerprint overrides default seed", () => {
+    const args = _buildArgsForTest({ args: ["--fingerprint=99887"] });
+    const fpArgs = args.filter(a => a.startsWith("--fingerprint="));
+    expect(fpArgs).toHaveLength(1);
+    expect(fpArgs[0]).toBe("--fingerprint=99887");
+  });
+
+  it("user --fingerprint-platform overrides default", () => {
+    const args = _buildArgsForTest({ args: ["--fingerprint-platform=linux"] });
+    const platArgs = args.filter(a => a.startsWith("--fingerprint-platform="));
+    expect(platArgs).toHaveLength(1);
+    expect(platArgs[0]).toBe("--fingerprint-platform=linux");
+  });
+
+  it("timezone param overrides user --fingerprint-timezone arg", () => {
+    const args = _buildArgsForTest({
+      args: ["--fingerprint-timezone=Europe/London"],
+      timezone: "America/New_York",
+    });
+    const tzArgs = args.filter(a => a.startsWith("--fingerprint-timezone="));
+    expect(tzArgs).toHaveLength(1);
+    expect(tzArgs[0]).toBe("--fingerprint-timezone=America/New_York");
+  });
+
+  it("locale param overrides user --lang arg", () => {
+    const args = _buildArgsForTest({
+      args: ["--lang=de-DE"],
+      locale: "en-US",
+    });
+    const langArgs = args.filter(a => a.startsWith("--lang="));
+    expect(langArgs).toHaveLength(1);
+    expect(langArgs[0]).toBe("--lang=en-US");
+  });
+
+  it("no duplicate flag keys in output", () => {
+    const args = _buildArgsForTest({
+      args: ["--fingerprint=99887", "--fingerprint-timezone=UTC", "--lang=fr-FR"],
+      timezone: "Europe/Berlin",
+      locale: "de-DE",
+    });
+    const keys = args.map(a => a.split("=")[0]);
+    expect(new Set(keys).size).toBe(keys.length);
+  });
+
+  it("non-value flags preserved without dedup issues", () => {
+    const args = _buildArgsForTest({ args: ["--disable-gpu", "--no-zygote"] });
+    expect(args).toContain("--disable-gpu");
+    expect(args).toContain("--no-zygote");
+    expect(args).toContain("--no-sandbox");
+  });
+});
+
 describe("migrateTimezoneId deprecation", () => {
   it("migrates timezoneId to timezone", () => {
     const result = migrateTimezoneId({ timezoneId: "Europe/Paris" });
