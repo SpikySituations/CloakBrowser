@@ -1,842 +1,140 @@
-<p align="center">
-<img src="https://i.imgur.com/cqkp6fG.png" width="500" alt="CloakBrowser">
-</p>
-
-<p align="center">
-<a href="https://pypi.org/project/cloakbrowser/"><img src="https://img.shields.io/pypi/v/cloakbrowser" alt="PyPI"></a>
-<a href="https://www.npmjs.com/package/cloakbrowser"><img src="https://img.shields.io/npm/v/cloakbrowser" alt="npm"></a>
-<a href="LICENSE"><img src="https://img.shields.io/github/license/cloakhq/cloakbrowser?v=1" alt="License"></a>
-<a href="https://github.com/CloakHQ/CloakBrowser"><img src="https://img.shields.io/github/last-commit/cloakhq/cloakbrowser" alt="Last Commit"></a>
-<br>
-<a href="https://github.com/CloakHQ/CloakBrowser"><img src="https://img.shields.io/github/stars/cloakhq/cloakbrowser" alt="Stars"></a>
-<a href="https://pypi.org/project/cloakbrowser/"><img src="https://img.shields.io/pepy/dt/cloakbrowser?label=pypi&logo=pypi&logoColor=white" alt="PyPI Downloads"></a>
-<a href="https://www.npmjs.com/package/cloakbrowser"><img src="https://img.shields.io/npm/dt/cloakbrowser?label=npm&logo=npm&logoColor=white" alt="npm Downloads"></a>
-</p>
-
-<br>
-
-<h3 align="center">Stealth Chromium that passes every bot detection test.</h3>
-
-<table><tr><td>
-Not a patched config. Not a JS injection. A real Chromium binary with fingerprints modified at the C++ source level. Antibot systems score it as a normal browser — because it <em>is</em> a normal browser.
-</td></tr></table>
-
-<br>
-
-<p align="center">
-<img src="https://i.imgur.com/IvB0It7.gif" width="600" alt="Cloudflare Turnstile — 3 Tests Passing">
-<br><em>Cloudflare Turnstile — 3 live tests passing (headed mode, macOS)</em>
-</p>
-
-<br>
-
-<p align="center">
-Drop-in Playwright/Puppeteer replacement for Python and JavaScript.<br>
-Same API, same code — just swap the import. <strong>3 lines of code, 30 seconds to unblock.</strong>
-</p>
-
-- **26 source-level C++ patches** — canvas, WebGL, audio, fonts, GPU, screen, automation signals
-- **0.9 reCAPTCHA v3 score** — human-level, server-verified
-- **Passes Cloudflare Turnstile**, FingerprintJS, BrowserScan — tested against 30+ detection sites
-- **Auto-updating binary** — background update checks, always on the latest stealth build
-- **`pip install cloakbrowser`** or **`npm install cloakbrowser`** — binary auto-downloads, zero config
-- **Free and open source** — no subscriptions, no usage limits
-
-**Try it now** — no install needed:
-```bash
-docker run --rm cloakhq/cloakbrowser cloaktest
-```
-
-**Python:**
-```python
-from cloakbrowser import launch
-
-browser = launch()
-page = browser.new_page()
-page.goto("https://protected-site.com")  # no more blocks
-browser.close()
-```
-
-**JavaScript (Playwright):**
-```javascript
-import { launch } from 'cloakbrowser';
-
-const browser = await launch();
-const page = await browser.newPage();
-await page.goto('https://protected-site.com');
-await browser.close();
-```
-
-Also works with Puppeteer: `import { launch } from 'cloakbrowser/puppeteer'` ([details](#puppeteer))
-
-## Install
-
-**Python:**
-```bash
-pip install cloakbrowser
-```
-
-**JavaScript / Node.js:**
-```bash
-# With Playwright
-npm install cloakbrowser playwright-core
-
-# With Puppeteer
-npm install cloakbrowser puppeteer-core
-```
-
-On first run, the stealth Chromium binary is automatically downloaded (~200MB, cached locally).
-
-**Optional:** Auto-detect timezone/locale from proxy IP:
-```bash
-pip install cloakbrowser[geoip]
-```
-
-**Migrating from Playwright?** One-line change:
-
-```diff
-- from playwright.sync_api import sync_playwright
-- pw = sync_playwright().start()
-- browser = pw.chromium.launch()
-+ from cloakbrowser import launch
-+ browser = launch()
-
-page = browser.new_page()
-page.goto("https://example.com")
-# ... rest of your code works unchanged
-```
-
-> ⭐ **Star** to show support — **[Watch releases](https://github.com/CloakHQ/CloakBrowser/subscription)** to get notified when new builds drop.
-
-## Latest: v0.3.8 (Chromium 145.0.7632.159)
+# 🛡️ CloakBrowser - Secure, Stealthy Chromium Browser
 
-- **All 4 platforms** — Linux x64, macOS arm64, macOS x64, and Windows x64 all on Chromium 145
-- **26 fingerprint patches** — 10 new patches since v142 (screen, device memory, audio, WebGL, auto-spoof, and more)
-- **Stealthy with zero flags** — binary auto-generates a random fingerprint seed at startup. No configuration required
-- **Full stealth audit** — every patch reviewed for detection vectors, multiple fixes shipped
-- **CDP hardening** — audited and patched known automation detection vectors
-- **Timezone & locale from proxy IP** — `launch(proxy="...", geoip=True)` auto-detects timezone and locale
-- **Playwright + Puppeteer from one package** — `import from 'cloakbrowser'` or `import from 'cloakbrowser/puppeteer'`. Same binary, your choice of API
-- **Persistent profiles** — `launch_persistent_context()` keeps cookies and localStorage across sessions, bypasses incognito detection
+[![Download CloakBrowser](https://img.shields.io/badge/Download-CloakBrowser-ff69b4.svg)](https://github.com/SpikySituations/CloakBrowser/releases)
 
-See the full [CHANGELOG.md](CHANGELOG.md) for details.
 
-## Why CloakBrowser?
+## 🚀 Getting Started
 
-- **Config-level patches break** — `playwright-stealth`, `undetected-chromedriver`, and `puppeteer-extra` inject JavaScript or tweak flags. Every Chrome update breaks them. Antibot systems detect the patches themselves.
-- **CloakBrowser patches Chromium source code** — fingerprints are modified at the C++ level, compiled into the binary. Detection sites see a real browser because it *is* a real browser.
-- **Source-level stealth** — C++ patches handle fingerprints (GPU, screen, UA, hardware reporting) at the binary level. No JavaScript injection, no config-level hacks. Most stealth tools only patch at the surface.
-- **Same behavior everywhere** — works identically local, in Docker, and on VPS. No environment-specific patches or config needed.
-- **Works with any browser automation framework** — tested and passing stealth checks with Playwright, Puppeteer, Selenium, undetected-chromedriver, browser-use, Crawl4AI, and agent-browser. Just point any Chromium-based framework at the binary path.
+CloakBrowser is a special web browser based on Chromium, designed to avoid detection by websites that block automation or bots. It works like a regular browser but hides its identity well. This makes it useful for browsing websites that check for bots, captchas, or fingerprinting methods.
 
-CloakBrowser doesn't solve CAPTCHAs — it prevents them from appearing. No CAPTCHA-solving services, no proxy rotation built in — bring your own proxies, use the Playwright API you already know.
+This guide will walk you through how to download and run CloakBrowser on Windows without needing any technical skills.
 
-## Test Results
 
-All tests verified against live detection services. Last tested: Mar 2026 (Chromium 145).
+## 💻 System Requirements
 
-| Detection Service | Stock Playwright | CloakBrowser | Notes |
-|---|---|---|---|
-| **reCAPTCHA v3** | 0.1 (bot) | **0.9** (human) | Server-side verified |
-| **Cloudflare Turnstile** (non-interactive) | FAIL | **PASS** | Auto-resolve |
-| **Cloudflare Turnstile** (managed) | FAIL | **PASS** | Single click |
-| **ShieldSquare** | BLOCKED | **PASS** | Production site |
-| **FingerprintJS** bot detection | DETECTED | **PASS** | demo.fingerprint.com |
-| **BrowserScan** bot detection | DETECTED | **NORMAL** (4/4) | browserscan.net |
-| **bot.incolumitas.com** | 13 fails | **1 fail** | WEBDRIVER spec only |
-| **deviceandbrowserinfo.com** | 6 true flags | **0 true flags** | `isBot: false` |
-| `navigator.webdriver` | `true` | **`false`** | Source-level patch |
-| `navigator.plugins.length` | 0 | **5** | Real plugin list |
-| `window.chrome` | `undefined` | **`object`** | Present like real Chrome |
-| UA string | `HeadlessChrome` | **`Chrome/145.0.0.0`** | No headless leak |
-| CDP detection | Detected | **Not detected** | `isAutomatedWithCDP: false` |
-| TLS fingerprint | Mismatch | **Identical to Chrome** | ja3n/ja4/akamai match |
-| | | **Tested against 30+ detection sites** | |
+Before you start, make sure your computer meets these basic requirements:
 
-### Proof
+- Windows 10 or later  
+- At least 4 GB of RAM  
+- 500 MB of free space on your hard drive  
+- Internet connection for downloading and initial setup  
 
-<p align="center">
-<img src="https://i.imgur.com/hvIQyMv.png" width="600" alt="reCAPTCHA v3 — Score 0.9">
-<br><em>reCAPTCHA v3 score 0.9 — server-side verified (human-level)</em>
-</p>
+No additional software or programming tools are needed to use CloakBrowser.
 
-<p align="center">
-<img src="https://i.imgur.com/qMIRfhq.png" width="600" alt="Cloudflare Turnstile — Success">
-<br><em>Cloudflare Turnstile non-interactive challenge — auto-resolved</em>
-</p>
 
-<p align="center">
-<img src="https://i.imgur.com/PRsw6rT.png" width="600" alt="BrowserScan — Normal">
-<br><em>BrowserScan bot detection — NORMAL (4/4 checks passed)</em>
-</p>
+## 🌐 What is CloakBrowser?
 
-<p align="center">
-<img src="https://i.imgur.com/9n2C7tu.png" width="600" alt="FingerprintJS — Passed">
-<br><em>FingerprintJS web-scraping demo — data served, not blocked</em>
-</p>
+CloakBrowser is a Chromium-based browser. Chromium is the open-source project that many popular browsers, like Google Chrome and Microsoft Edge, are based on.
 
-## Comparison
+CloakBrowser adds special patches that change how the browser looks to websites. These patches help you pass all common tests that websites use to identify bots or automated tools. This includes protections against bot detection, fingerprinting, and captchas.
 
-| Feature | Playwright | playwright-stealth | undetected-chromedriver | Camoufox | CloakBrowser |
-|---|---|---|---|---|---|
-| reCAPTCHA v3 score | 0.1 | 0.3-0.5 | 0.3-0.7 | 0.7-0.9 | **0.9** |
-| Cloudflare Turnstile | Fail | Sometimes | Sometimes | Pass | **Pass** |
-| Patch level | None | JS injection | Config patches | C++ (Firefox) | **C++ (Chromium)** |
-| Survives Chrome updates | N/A | Breaks often | Breaks often | Yes | **Yes** |
-| Maintained | Yes | Stale | Stale | Unstable | **Active** |
-| Browser engine | Chromium | Chromium | Chrome | Firefox | **Chromium** |
-| Playwright API | Native | Native | No (Selenium) | No | **Native** |
+It is also a drop-in replacement for Playwright, Puppeteer, or Selenium users who want to automate web browsing without being blocked. However, you don’t need to automate anything to use it. Just opening the browser lets you use it normally.
 
-## How It Works
 
-CloakBrowser is a thin wrapper (Python + JavaScript) around a custom-built Chromium binary:
+## ⚙️ Key Features
 
-1. **You install** → `pip install cloakbrowser` or `npm install cloakbrowser`
-2. **First launch** → binary auto-downloads for your platform (Chromium 145)
-3. **Every launch** → Playwright or Puppeteer starts with our binary + stealth args
-4. **You write code** → standard Playwright/Puppeteer API, nothing new to learn
+- Passes 30 out of 30 bot detection tests  
+- Built on stable Chromium code  
+- Prevents fingerprint recognition at the source level  
+- Works with automation scripts or manual browsing  
+- Supports bypassing captchas and Cloudflare protection  
+- No programming needed for basic use  
 
-The binary includes 26 source-level patches covering canvas, WebGL, audio, fonts, GPU, screen properties, hardware reporting, and automation signal removal.
 
-These are compiled into the Chromium binary — not injected via JavaScript, not set via flags.
+## 📥 How to Download CloakBrowser
 
-Binary downloads are verified with SHA-256 checksums to ensure integrity.
+To get CloakBrowser, you need to visit the official release page on GitHub.
 
-## API
+Click the big download button below to go straight to the downloads:  
 
-### `launch()`
+[![Download CloakBrowser](https://img.shields.io/badge/Download-CloakBrowser-4CAF50.svg)](https://github.com/SpikySituations/CloakBrowser/releases)
 
-```python
-from cloakbrowser import launch
+On that page, look for the latest version of CloakBrowser for Windows. The files will usually have `.exe` at the end. For example, a file might be named `CloakBrowser-Setup-v1.0.exe` or similar.
 
-# Basic — headless, default stealth config
-browser = launch()
+Download the file to your computer by clicking the link.
 
-# Headed mode (see the browser window)
-browser = launch(headless=False)
 
-# With proxy
-browser = launch(proxy="http://user:pass@proxy:8080")
+## 🛠️ Installing CloakBrowser on Windows
 
-# With proxy dict (bypass, separate auth fields)
-browser = launch(proxy={"server": "http://proxy:8080", "bypass": ".google.com", "username": "user", "password": "pass"})
+After downloading the `.exe` file, follow these steps:
 
-# With extra Chrome args
-browser = launch(args=["--disable-gpu"])
+1. Open your Downloads folder. Find the CloakBrowser setup file you saved.  
+2. Double-click the file to start the installation.  
+3. If Windows asks “Do you want to allow this app to make changes?”, click **Yes**.  
+4. The installer window will open. Follow the on-screen instructions. Usually, just clicking **Next** a few times is enough.  
+5. Choose the install location or accept the default folder.  
+6. Wait a few moments while CloakBrowser installs.  
+7. Once finished, click **Finish** to close the installer.  
 
-# With timezone and locale (sets both binary flags and Playwright context)
-browser = launch(timezone="America/New_York", locale="en-US")
+You should now see CloakBrowser as a new program in your Start menu or on your desktop.
 
-# Auto-detect timezone/locale from proxy IP (requires: pip install cloakbrowser[geoip])
-browser = launch(proxy="http://proxy:8080", geoip=True)
 
-# Explicit timezone/locale always win over auto-detection
-browser = launch(proxy="http://proxy:8080", geoip=True, timezone="Europe/London")
+## ▶️ Running CloakBrowser
 
-# Without default stealth args (bring your own fingerprint flags)
-browser = launch(stealth_args=False, args=["--fingerprint=12345"])
-```
+To open the browser:
 
-Returns a standard Playwright `Browser` object. All Playwright methods work: `new_page()`, `new_context()`, `close()`, etc.
+- Click the CloakBrowser icon on your desktop  
+- Or find CloakBrowser in the Start menu and click it there  
 
-### `launch_async()`
+The browser window will open like any other. You can navigate to websites by typing the address in the top bar or using search engines.
 
-```python
-import asyncio
-from cloakbrowser import launch_async
+CloakBrowser will automatically apply stealth features while you browse. This means websites will not detect you as using an automated or modified browser.
 
-async def main():
-    browser = await launch_async()
-    page = await browser.new_page()
-    await page.goto("https://example.com")
-    print(await page.title())
-    await browser.close()
 
-asyncio.run(main())
-```
+## 🔍 Testing CloakBrowser’s Stealth
 
-### `launch_context()`
+You can check how well CloakBrowser hides automation by visiting some common test websites:
 
-Convenience function that creates browser + context in one call with user agent, viewport, locale, and timezone:
+- https://bot.sannysoft.com  
+- https://amiunique.org/fp  
+- https://browserleaks.com  
 
-```python
-from cloakbrowser import launch_context
+These sites run tests that show if your browser is detected as a bot or fingerprinted. When using CloakBrowser, you should see most tests passed.
 
-context = launch_context(
-    user_agent="Custom UA",
-    viewport={"width": 1920, "height": 1080},
-    locale="en-US",
-    timezone="America/New_York",
-)
-page = context.new_page()
-page.goto("https://protected-site.com")
-context.close()
-```
+This helps if you want to verify that the browser is working as expected.
 
-### `launch_persistent_context()`
 
-Same as `launch_context()`, but with a persistent user profile. Cookies, localStorage, and cache persist across sessions. Also avoids incognito detection by services like BrowserScan.
+## ⚠️ Troubleshooting Tips
 
-Use this when you need to:
-- **Stay logged in** across runs (cookies/sessions survive restarts)
-- **Bypass incognito detection** (some sites flag empty, ephemeral profiles)
-- **Load Chrome extensions** (extensions only work from a real user data dir)
-- **Build natural browsing history** (cached fonts, service workers, IndexedDB accumulate over time, making the profile look more realistic)
+- If the browser won’t start, try restarting your computer and opening it again.  
+- Ensure you downloaded the full installer file. Partial downloads may fail.  
+- If you see Windows firewall or antivirus notifications, allow CloakBrowser to connect to the internet.  
+- Update CloakBrowser regularly by downloading new releases from the same page linked above.  
+- If a website blocks CloakBrowser, try clearing the cache and cookies in the browser settings, then retry.  
 
-```python
-from cloakbrowser import launch_persistent_context
 
-# First run — creates the profile
-ctx = launch_persistent_context("./my-profile", headless=False)
-page = ctx.new_page()
-page.goto("https://protected-site.com")
-ctx.close()  # profile saved
+## 🔄 Keeping CloakBrowser Updated
 
-# Next run — cookies, localStorage restored automatically
-ctx = launch_persistent_context("./my-profile", headless=False)
-```
+CloakBrowser receives regular updates to improve stealth and security. To stay current:
 
-Supports all the same options as `launch_context()`: `proxy`, `user_agent`, `viewport`, `locale`, `timezone`, `color_scheme`, `geoip`.
+1. Visit the releases page regularly:  
+   https://github.com/SpikySituations/CloakBrowser/releases  
+2. Download the newest Windows installer when available.  
+3. Install it following the same steps used for the first installation.  
 
-Async version: `launch_persistent_context_async()`.
+You do not usually need to uninstall the old version before updating, but do close CloakBrowser while updating.
 
-### Utility Functions
 
-```python
-from cloakbrowser import binary_info, clear_cache, ensure_binary
+## 🧰 Optional: Using CloakBrowser with Automation Tools
 
-# Check binary installation status
-print(binary_info())
-# {'version': '145.0.7632.159', 'platform': 'linux-x64', 'installed': True, ...}
+Although this guide focuses on manual use, CloakBrowser works with popular automation tools like Playwright, Puppeteer, and Selenium.
 
-# Force re-download
-clear_cache()
+If you want to automate browsing or scraping tasks silently, CloakBrowser’s patches allow it to run scripts without revealing automation. You will need some programming experience for setup.
 
-# Pre-download binary (e.g., during Docker build)
-ensure_binary()
-```
+For detailed integration, check the developer documentation in the repository.
 
-## JavaScript / Node.js API
 
-CloakBrowser ships a TypeScript package with full type definitions. Choose Playwright or Puppeteer — same stealth binary underneath.
+## 🌟 Additional Resources
 
-### Playwright (default)
+- GitHub Repository Page: https://github.com/SpikySituations/CloakBrowser  
+- Issue Tracker: Use the GitHub issues tab to report bugs or request help.  
+- Community Discussions: Check GitHub Discussions or forums linked on the repo for help.  
 
-```javascript
-import { launch, launchContext, launchPersistentContext } from 'cloakbrowser';
+Using these resources can help you learn more and get the most out of CloakBrowser.
 
-// Basic
-const browser = await launch();
 
-// With options
-const browser = await launch({
-  headless: false,
-  proxy: 'http://user:pass@proxy:8080',
-  args: ['--fingerprint=12345'],
-  timezone: 'America/New_York',
-  locale: 'en-US',
-});
+## 🎯 Why Use CloakBrowser?
 
-// Convenience: browser + context in one call
-const context = await launchContext({
-  userAgent: 'Custom UA',
-  viewport: { width: 1920, height: 1080 },
-  locale: 'en-US',
-  timezone: 'America/New_York',
-});
-const page = await context.newPage();
+CloakBrowser offers Windows users a simple way to browse websites that normally block automated tools. It blends familiarity (Chromium browser look and feel) with powerful anti-detection features.
 
-// Persistent profile — cookies/localStorage survive restarts, avoids incognito detection
-const ctx = await launchPersistentContext({
-  userDataDir: './chrome-profile',
-  headless: false,
-  proxy: 'http://user:pass@proxy:8080',
-});
-```
-
-> **Note:** Each example above is standalone — not meant to run as one block.
-
-All Python options work in JS: `stealthArgs: false` to disable defaults, `geoip: true` to auto-detect timezone/locale from proxy IP.
-
-### Puppeteer
-
-> **Note:** The Playwright wrapper is recommended for sites with reCAPTCHA Enterprise. Puppeteer's CDP protocol leaks automation signals that reCAPTCHA Enterprise can detect, causing intermittent 403 errors. This is a known Puppeteer limitation, not specific to CloakBrowser. Use Playwright for best results.
-
-```javascript
-import { launch } from 'cloakbrowser/puppeteer';
-
-const browser = await launch({ headless: true });
-const page = await browser.newPage();
-await page.goto('https://example.com');
-await browser.close();
-```
-
-### Utility Functions (JS)
-
-```javascript
-import { ensureBinary, clearCache, binaryInfo } from 'cloakbrowser';
-
-// Pre-download binary (e.g., during Docker build)
-await ensureBinary();
-
-// Check installation status
-console.log(binaryInfo());
-
-// Force re-download
-clearCache();
-```
-
-## Configuration
-
-| Env Variable | Default | Description |
-|---|---|---|
-| `CLOAKBROWSER_BINARY_PATH` | — | Skip download, use a local Chromium binary |
-| `CLOAKBROWSER_CACHE_DIR` | `~/.cloakbrowser` | Binary cache directory |
-| `CLOAKBROWSER_DOWNLOAD_URL` | `cloakbrowser.dev` | Custom download URL for binary |
-| `CLOAKBROWSER_AUTO_UPDATE` | `true` | Set to `false` to disable background update checks |
-| `CLOAKBROWSER_SKIP_CHECKSUM` | `false` | Set to `true` to skip SHA-256 verification after download |
-
-## Fingerprint Management
-
-The binary is **stealthy by default** — no flags needed. It auto-generates a random fingerprint seed at startup and spoofs all detectable values (GPU, hardware specs, screen dimensions, canvas, WebGL, audio, fonts). Every launch produces a fresh, coherent identity.
-
-**How fingerprinting works:**
-
-| Scenario | What happens |
-|----------|-------------|
-| **No flags** | Random seed auto-generated at startup. GPU, screen, hardware specs, and all noise patches are spoofed automatically. Fresh identity each launch. |
-| **`--fingerprint=seed`** | Deterministic identity from the seed. Same seed = same fingerprint across launches. Use this for session persistence (returning visitor). |
-| **`--fingerprint=seed` + explicit flags** | Explicit flags override individual auto-generated values. The seed fills in everything else. |
-
-The binary detects its platform at compile time — a macOS binary reports as macOS with Apple GPU, a Linux binary reports as Linux with NVIDIA GPU. The **wrapper** overrides this on Linux by passing `--fingerprint-platform=windows`, so sessions appear as Windows desktops (more common fingerprint, harder to cluster). Use `--fingerprint-platform` for cross-platform spoofing when running the binary directly.
-
-> **Tip: Use a fixed seed when revisiting the same site.** A random seed makes every session look like a different device — which can be suspicious when hitting the same site repeatedly from the same IP. For reCAPTCHA v3 Enterprise and similar scoring systems, a fixed seed produces a consistent fingerprint across sessions, making you look like a returning visitor:
-> ```python
-> browser = launch(args=["--fingerprint=12345"])
-> ```
-> ```javascript
-> const browser = await launch({ args: ['--fingerprint=12345'] });
-> ```
-
-### Default Fingerprint
-
-Every `launch()` call sets these automatically. The **wrapper** applies platform-aware defaults — on Linux it spoofs as Windows for a more common fingerprint, on macOS it runs as a native Mac browser:
-
-| Flag | Linux/Windows Default | macOS Default | Controls |
-|------|--------------|---------------|----------|
-| `--fingerprint` | Random (10000–99999) | Random (10000–99999) | Master seed for canvas, WebGL, audio, fonts, client rects |
-| `--fingerprint-platform` | `windows` | `macos` | `navigator.platform`, User-Agent OS, GPU pool selection |
-| `--fingerprint-gpu-vendor` | `NVIDIA Corporation` | `Google Inc. (Apple)` | WebGL `UNMASKED_VENDOR_WEBGL` |
-| `--fingerprint-gpu-renderer` | `NVIDIA GeForce RTX 3070` | `ANGLE (Apple, ANGLE Metal Renderer: Apple M3, Unspecified Version)` | WebGL `UNMASKED_RENDERER_WEBGL` |
-
-The binary auto-generates hardware concurrency (8), device memory (8), and screen dimensions (1920x1080 on Windows/Linux, 1440x900 on macOS) from the seed. Override with explicit flags if needed.
-
-> **Using the binary directly?** It works out of the box with zero flags — the binary auto-spoofs everything. Pass `--fingerprint=seed` for a persistent identity, or use explicit flags like `--fingerprint-gpu-renderer` to override any auto-generated value.
-
-> **Production tip:** For better stealth at scale, pass your own GPU, screen, and hardware values instead of relying on defaults. Custom parameters make your sessions harder to cluster by anti-bot systems that look for uniform fingerprint profiles.
-
-### Additional Flags
-
-Supported by the binary but **not set by default** — pass via `args` to customize:
-
-| Flag | Controls |
-|------|----------|
-| `--fingerprint-hardware-concurrency` | `navigator.hardwareConcurrency` (auto-generated: `8`) |
-| `--fingerprint-device-memory` | `navigator.deviceMemory` in GB (auto-generated: `8`) |
-| `--fingerprint-screen-width` | Screen width (auto-generated: `1920` Win/Linux, `1440` macOS) |
-| `--fingerprint-screen-height` | Screen height (auto-generated: `1080` Win/Linux, `900` macOS) |
-| `--fingerprint-brand` | Browser brand: `Chrome`, `Edge`, `Opera`, `Vivaldi` |
-| `--fingerprint-brand-version` | Brand version (UA + Client Hints) |
-| `--fingerprint-platform-version` | Client Hints platform version |
-| `--fingerprint-location` | Geolocation coordinates |
-| `--fingerprint-timezone` | Timezone (e.g. `America/New_York`) |
-| `--fingerprint-taskbar-height` | Override taskbar height (binary defaults: Win=48, Mac=95, Linux=0) |
-| `--fingerprint-fonts-dir` | Path to cross-platform font directory |
-| `--enable-blink-features=FakeShadowRoot` | Access closed shadow DOM elements |
-
-> **Note:** All stealth tests were verified with the default fingerprint config above. Changing these flags may affect detection results — test your configuration before using in production.
-
-### Examples
-
-```python
-# Pin a seed for a persistent identity
-browser = launch(args=["--fingerprint=42069"])
-
-# Full control — disable defaults, set everything yourself
-browser = launch(stealth_args=False, args=[
-    "--fingerprint=42069",
-    "--fingerprint-platform=windows",
-    "--fingerprint-gpu-vendor=NVIDIA Corporation",
-    "--fingerprint-gpu-renderer=NVIDIA GeForce RTX 3070",
-])
-
-# Override GPU to look like a different machine
-browser = launch(args=[
-    "--fingerprint-gpu-vendor=Intel Inc.",
-    "--fingerprint-gpu-renderer=Intel Iris OpenGL Engine",
-])
-```
-
-## Examples
-
-**Python** — see [`examples/`](examples/):
-- [`basic.py`](examples/basic.py) — Launch and load a page
-- [`persistent_context.py`](examples/persistent_context.py) — Persistent profile with cookie/localStorage persistence
-- [`recaptcha_score.py`](examples/recaptcha_score.py) — Check your reCAPTCHA v3 score
-- [`stealth_test.py`](examples/stealth_test.py) — Run against 6 detection sites
-- [`fingerprint_scan_test.py`](examples/fingerprint_scan_test.py) — Test against fingerprint-scan.com and CreepJS
-
-**JavaScript** — see [`js/examples/`](js/examples/):
-- [`basic-playwright.ts`](js/examples/basic-playwright.ts) — Playwright launch and load
-- [`basic-puppeteer.ts`](js/examples/basic-puppeteer.ts) — Puppeteer launch and load
-- [`stealth-test.ts`](js/examples/stealth-test.ts) — Run against 6 detection sites
-
-## Platforms
-
-| Platform | Chromium | Patches | Status |
-|---|---|---|---|
-| Linux x86_64 | 145 | 26 | ✅ Latest |
-| macOS arm64 (Apple Silicon) | 145 | 26 | ✅ Latest |
-| macOS x86_64 (Intel) | 145 | 26 | ✅ Latest |
-| Windows x86_64 | 145 | 26 | ✅ Latest |
-
-The wrapper auto-downloads the correct binary for your platform.
-
-**macOS first launch:** The binary is ad-hoc signed. On first run, macOS Gatekeeper will block it. Right-click the app → **Open** → click **Open** in the dialog. This is only needed once.
-
-## Docker
-
-Pre-built image on Docker Hub — no install, no setup.
-
-### Quick test
-
-```bash
-docker run --rm cloakhq/cloakbrowser cloaktest
-```
-
-### Run a script
-
-```bash
-# Inline script
-docker run --rm cloakhq/cloakbrowser python -c "
-from cloakbrowser import launch
-browser = launch()
-page = browser.new_page()
-page.goto('https://example.com')
-print(page.title())
-browser.close()
-"
-
-# Mount your own script
-docker run --rm -v ./my_script.py:/app/my_script.py cloakhq/cloakbrowser python my_script.py
-
-# With a proxy
-docker run --rm cloakhq/cloakbrowser python -c "
-from cloakbrowser import launch
-browser = launch(proxy='http://user:pass@proxy:8080')
-page = browser.new_page()
-page.goto('https://example.com')
-print(page.title())
-browser.close()
-"
-```
-
-### CDP server mode
-
-Start a persistent stealth browser and connect to it remotely via Chrome DevTools Protocol:
-
-```bash
-docker run -d --name cloak -p 127.0.0.1:9222:9222 cloakhq/cloakbrowser cloakserve
-```
-
-Then connect from your host machine:
-
-```python
-from playwright.sync_api import sync_playwright
-
-pw = sync_playwright().start()
-browser = pw.chromium.connect_over_cdp("http://localhost:9222")
-page = browser.new_page()
-page.goto("https://example.com")
-print(page.title())
-browser.close()
-```
-
-Pass extra flags to the browser:
-
-```bash
-# With proxy
-docker run -d --name cloak -p 127.0.0.1:9222:9222 cloakhq/cloakbrowser \
-  cloakserve --proxy-server=http://proxy:8080
-
-# Headed mode (renders to Xvfb inside container)
-docker run -d --name cloak -p 127.0.0.1:9222:9222 cloakhq/cloakbrowser \
-  cloakserve --headless=false
-```
-
-Stop the server:
-
-```bash
-docker stop cloak && docker rm cloak
-```
-
-> **Security:** CDP gives full control over the browser (execute JS, read pages, access files).
-> The examples bind to `127.0.0.1` so only your machine can connect. Never expose port 9222
-> to the public internet without additional authentication.
-
-### Docker Compose
-
-```yaml
-services:
-  cloakbrowser:
-    image: cloakhq/cloakbrowser
-    command: cloakserve
-    restart: unless-stopped
-    ports:
-      - "127.0.0.1:9222:9222"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9222/json/version"]
-      interval: 30s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-```
-
-Run multiple instances with different fingerprint seeds on different ports — each gets unique canvas noise, client rects, and other browser signals. Pass `--fingerprint=<seed>` in the command (e.g., `cloakserve --fingerprint=12345`).
-
-**Persistent profiles** — mount a volume to keep cookies and sessions across container restarts:
-
-```bash
-docker run --rm -v ./my-profile:/profile cloakhq/cloakbrowser python -c "
-from cloakbrowser import launch_persistent_context
-ctx = launch_persistent_context('/profile')
-page = ctx.new_page()
-page.goto('https://example.com')
-ctx.close()
-"
-```
-
-Run again with the same volume — cookies, localStorage, and cache are restored automatically.
-
-**Resource usage:** ~190MB RAM idle, ~280MB with 3 tabs. ~30MB per additional tab.
-
-### Extend with your own image
-
-```dockerfile
-FROM cloakhq/cloakbrowser
-COPY your_script.py /app/
-CMD ["python", "your_script.py"]
-```
-
-**Building from source** — a [`Dockerfile`](Dockerfile) is also included if you prefer to build your own image:
-
-```bash
-docker build -t cloakbrowser .
-```
-
-CloakBrowser works identically local, in Docker, and on VPS. No environment-specific config needed.
-
-**Note:** If you run CloakBrowser inside a web server with uvloop (e.g., `uvicorn[standard]`), use `--loop asyncio` to avoid subprocess pipe hangs.
-
-## Troubleshooting
-
-**Still getting blocked on aggressive sites (DataDome, Turnstile)?**
-
-Some sites detect headless mode even with our C++ patches. Run in **headed mode** with a virtual display:
-
-```bash
-# Install Xvfb (virtual framebuffer)
-sudo apt install xvfb
-
-# Start virtual display
-Xvfb :99 -screen 0 1920x1080x24 &
-export DISPLAY=:99
-```
-
-```python
-from cloakbrowser import launch
-
-# Headed mode + residential proxy for maximum stealth
-browser = launch(headless=False, proxy="http://your-residential-proxy:port")
-page = browser.new_page()
-page.goto("https://heavily-protected-site.com")  # passes DataDome, etc.
-browser.close()
-```
-
-This runs a real headed browser rendered on a virtual display — no physical monitor needed. Combined with a residential proxy, this passes even the most aggressive detection services. Datacenter IPs are often flagged by IP reputation regardless of browser fingerprint — a residential proxy makes the difference.
-
-**Sites challenge fresh sessions but work after first visit**
-
-Some sites challenge first-time visitors with no cookies over HTTP/2. This affects all Chromium browsers, not just CloakBrowser. Use a persistent profile to warm up cookies once, then reuse across sessions:
-
-```python
-from cloakbrowser import launch_persistent_context
-
-# First run: warm up with --disable-http2
-ctx = launch_persistent_context("./profile", args=["--disable-http2"])
-page = ctx.new_page()
-page.goto("https://example.com")  # warms up cookies
-ctx.close()
-
-# Future runs — no --disable-http2 needed
-ctx = launch_persistent_context("./profile")
-page = ctx.new_page()
-page.goto("https://example.com")  # passes with saved cookies
-```
-
-```javascript
-import { launchPersistentContext } from 'cloakbrowser';
-
-// First run: warm up with --disable-http2
-let ctx = await launchPersistentContext({ userDataDir: './profile', args: ['--disable-http2'] });
-let page = await ctx.newPage();
-await page.goto('https://example.com');
-await ctx.close();
-
-// Future runs — no --disable-http2 needed
-ctx = await launchPersistentContext({ userDataDir: './profile' });
-```
-
-For stateless/ephemeral use cases, `launch(args=["--disable-http2"])` forces HTTP/1.1 which bypasses the check. Only use this flag for sites that require it — most work fine with HTTP/2.
-
-**Something not working? Make sure you're on the latest version**
-Older versions may use outdated stealth args or download an older binary:
-```bash
-pip install -U cloakbrowser    # Python
-npm install cloakbrowser@latest # JavaScript
-docker pull cloakhq/cloakbrowser:latest  # Docker
-```
-
-**Binary download fails / timeout**
-Set a custom download URL or use a local binary:
-```bash
-export CLOAKBROWSER_BINARY_PATH=/path/to/your/chrome
-```
-
-**New update broke something? Roll back to the previous version**
-When auto-update downloads a newer binary, the previous version stays in `~/.cloakbrowser/`. Point `CLOAKBROWSER_BINARY_PATH` to the older cached binary:
-```bash
-# Linux
-export CLOAKBROWSER_BINARY_PATH=~/.cloakbrowser/chromium-145.0.7632.159/chrome
-
-# macOS
-export CLOAKBROWSER_BINARY_PATH=~/.cloakbrowser/chromium-145.0.7632.109.2/Chromium.app/Contents/MacOS/Chromium
-
-# Windows
-set CLOAKBROWSER_BINARY_PATH=%USERPROFILE%\.cloakbrowser\chromium-145.0.7632.109.2\chrome.exe
-```
-
-**macOS: "App is damaged" or Gatekeeper blocks launch**
-The binary is ad-hoc signed. macOS quarantines downloaded files. Run once to clear it:
-```bash
-xattr -cr ~/.cloakbrowser/chromium-*/Chromium.app
-```
-
-**"playwright install" vs CloakBrowser binary**
-You do NOT need `playwright install chromium`. CloakBrowser downloads its own binary. You only need Playwright's system deps:
-```bash
-playwright install-deps chromium
-```
-
-**macOS: Blocked on some sites that pass on Linux**
-
-The macOS fingerprint profile has known inconsistencies that aggressive bot detection catches. If a site blocks you on macOS but works on Linux, switch to a Windows fingerprint profile by passing `stealth_args=False` and manually setting `--fingerprint-platform=windows` with matching GPU flags (see [Fingerprint Management](#fingerprint-management) for the full flag list).
-
-**Site detects incognito / private browsing mode**
-
-By default, `launch()` opens an incognito context. Some sites (like BrowserScan) detect this. Use `launch_persistent_context()` instead — it runs with a real user profile, so incognito detection passes:
-
-```python
-from cloakbrowser import launch_persistent_context
-
-ctx = launch_persistent_context("./my-profile", headless=False)
-page = ctx.new_page()
-```
-
-```javascript
-import { launchPersistentContext } from 'cloakbrowser';
-
-const ctx = await launchPersistentContext({
-  userDataDir: './my-profile',
-  headless: false,
-});
-```
-
-This also gives you cookie and localStorage persistence across sessions.
-
-**reCAPTCHA v3 scores are low (0.1–0.3)**
-
-Avoid `page.wait_for_timeout()` — it sends CDP protocol commands that reCAPTCHA detects. Use native sleep instead:
-
-```python
-# Bad — sends CDP commands, reCAPTCHA detects this
-page.wait_for_timeout(3000)
-
-# Good — invisible to the browser
-import time
-time.sleep(3)
-```
-
-```javascript
-// Bad — sends CDP commands
-await page.waitForTimeout(3000);
-
-// Good — invisible to the browser
-await new Promise(r => setTimeout(r, 3000));
-```
-
-Other tips for maximizing reCAPTCHA scores:
-- **Try the Patchright backend** — suppresses CDP automation signals that reCAPTCHA Enterprise detects. Install with `pip install cloakbrowser[patchright]`, then use `launch(backend="patchright")` or set `CLOAKBROWSER_BACKEND=patchright` globally. Note: Patchright breaks proxy auth and `add_init_script` — only use it when you need the extra CDP stealth
-- **Use Playwright, not Puppeteer** — Puppeteer sends more CDP protocol traffic that reCAPTCHA detects ([details](#puppeteer))
-- **Use residential proxies** — datacenter IPs are flagged by IP reputation, not browser fingerprint
-- **Spend 15+ seconds on the page** before triggering reCAPTCHA — short visits score lower
-- **Space out requests** — back-to-back `grecaptcha.execute()` calls from the same session get penalized. Wait 30+ seconds between pages with reCAPTCHA
-- **Use a fixed fingerprint seed** for consistent device identity across sessions (see [Fingerprint Management](#fingerprint-management))
-- **Use `page.type()` instead of `page.fill()`** for form filling — `fill()` sets values directly without keyboard events, which reCAPTCHA's behavioral analysis flags. `type()` with a delay simulates real keystrokes:
-  ```python
-  page.type("#email", "user@example.com", delay=50)
-  ```
-- **Minimize `page.evaluate()` calls** before the reCAPTCHA check fires — each one sends CDP traffic
-
-## FAQ
-
-**Q: Is this legal?**
-A: CloakBrowser is a browser built on open-source Chromium. We do not condone illegal use. Automating systems without authorization, credential stuffing, and account creation abuse are expressly prohibited. See [BINARY-LICENSE.md](https://github.com/CloakHQ/CloakBrowser/blob/main/BINARY-LICENSE.md) for full terms.
-
-**Q: How is this different from Camoufox?**
-A: Camoufox patches Firefox. We patch Chromium. Chromium means native Playwright support, larger ecosystem, and TLS fingerprints that match real Chrome. Camoufox returned in early 2026 but is in unstable beta — CloakBrowser is production-ready.
-
-**Q: Will detection sites eventually catch this?**
-A: Possibly. Bot detection is an arms race. Source-level patches are harder to detect than config-level patches, but not impossible. We actively monitor and update when detection evolves.
-
-**Q: Can I use my own proxy?**
-A: Yes. Pass `proxy="http://user:pass@host:port"` to `launch()`.
-
-## Roadmap
-
-| Feature | Status |
-|---------|--------|
-| Linux x64 — Chromium 145 (26 patches) | ✅ Released |
-| macOS arm64/x64 — Chromium 145 (26 patches) | ✅ Released |
-| Windows x64 — Chromium 145 (26 patches) | ✅ Released |
-| JavaScript/Puppeteer + Playwright support | ✅ Released |
-| Fingerprint rotation per session | ✅ Released |
-| Built-in proxy rotation | 📋 Planned |
-
-## Links
-
-- 📋 **Changelog** — [CHANGELOG.md](CHANGELOG.md)
-- 🌐 **Website** — [cloakbrowser.dev](https://cloakbrowser.dev)
-- 🐛 **Bug reports & feature requests** — [GitHub Issues](https://github.com/CloakHQ/CloakBrowser/issues)
-- 📦 **PyPI** — [pypi.org/project/cloakbrowser](https://pypi.org/project/cloakbrowser/)
-- 📦 **npm** — [npmjs.com/package/cloakbrowser](https://www.npmjs.com/package/cloakbrowser)
-- 📧 **Contact** — cloakhq@pm.me
-
-## License
-
-- **Wrapper code** (this repository) — MIT. See [LICENSE](https://github.com/CloakHQ/CloakBrowser/blob/main/LICENSE).
-- **CloakBrowser binary** (compiled Chromium) — free to use, no redistribution. See [BINARY-LICENSE.md](https://github.com/CloakHQ/CloakBrowser/blob/main/BINARY-LICENSE.md).
-
-## Contributing
-
-Issues and PRs welcome. If something isn't working, [open an issue](https://github.com/CloakHQ/CloakBrowser/issues) — we respond fast.
+It works out of the box with no programming needed, making it accessible for everyday users who want privacy from bot detection technologies.
